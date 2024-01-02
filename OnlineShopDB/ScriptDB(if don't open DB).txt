@@ -1,0 +1,123 @@
+CREATE TABLE Company
+( 
+	ID_Company           integer  IDENTITY ( 1,1 )  NOT NULL ,
+	CompanyName          varchar(70)  NOT NULL ,
+	CONSTRAINT PKCompany PRIMARY KEY  CLUSTERED (ID_Company ASC)
+)
+go
+
+CREATE TABLE Shoes
+( 
+	ID_Shoes             integer  NOT NULL ,
+	ShoesName            varchar(50)  NOT NULL ,
+	Price                float  NOT NULL ,
+	Description          varchar(100)  NULL ,
+	ID_Company           integer  NOT NULL ,
+	CONSTRAINT PKShoes PRIMARY KEY  CLUSTERED (ID_Shoes ASC),
+	CONSTRAINT R_19 FOREIGN KEY (ID_Company) REFERENCES Company(ID_Company)
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+)
+go
+
+CREATE TABLE Shoes_size
+( 
+	Size                 integer  NOT NULL ,
+	ID_Shoes             integer  NOT NULL ,
+	Amount               integer  NULL ,
+	CONSTRAINT PKShoes_size PRIMARY KEY  CLUSTERED (Size ASC,ID_Shoes ASC),
+	CONSTRAINT R_12 FOREIGN KEY (ID_Shoes) REFERENCES Shoes(ID_Shoes)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+)
+go
+
+CREATE TABLE Account_status
+( 
+	AStatusName          varchar(20)  NOT NULL ,
+	CONSTRAINT PKAccount_status PRIMARY KEY  CLUSTERED (AStatusName ASC)
+)
+go
+
+CREATE TABLE Customer
+( 
+	ID_Customer          integer  IDENTITY ( 1,1 )  NOT NULL ,
+	CName                varchar(40)  NULL ,
+	CSurname             varchar(40)  NULL ,
+	CEmail               varchar(50)  NULL ,
+	CPhone               char(13)  NULL ,
+	CAddress             varchar(100)  NULL ,
+	Birthday             datetime  NULL ,
+	CONSTRAINT PKCustomer PRIMARY KEY  CLUSTERED (ID_Customer ASC)
+)
+go
+
+CREATE TABLE Account
+( 
+	ID_Account           integer  IDENTITY ( 1,1 )  NOT NULL ,
+	Login                varchar(20)  NOT NULL ,
+	Password             varchar(20)  NOT NULL ,
+	CreateDate           datetime  NOT NULL ,
+	ID_Customer          integer  NULL ,
+	AStatusName          varchar(20)  NULL ,
+	CONSTRAINT PKAccount PRIMARY KEY  CLUSTERED (ID_Account ASC),
+	CONSTRAINT R_3 FOREIGN KEY (AStatusName) REFERENCES Account_status(AStatusName)
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE,
+	CONSTRAINT R_4 FOREIGN KEY (ID_Customer) REFERENCES Customer(ID_Customer)
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+)
+go
+
+CREATE TABLE Cart
+( 
+	ID_Account           integer  NOT NULL ,
+	DateCart             datetime  NULL ,
+	ID_Cart              integer  IDENTITY ( 1,1 )  NOT NULL ,
+	CONSTRAINT PKCart PRIMARY KEY  CLUSTERED (ID_Cart ASC),
+	CONSTRAINT R_13 FOREIGN KEY (ID_Account) REFERENCES Account(ID_Account)
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+)
+go
+
+CREATE TABLE CartContent
+( 
+	Size                 integer  NOT NULL ,
+	ID_Shoes             integer  NOT NULL ,
+	Quantity             integer  NULL ,
+	ID_Cart              integer  NOT NULL ,
+	CONSTRAINT PKCartContent PRIMARY KEY  CLUSTERED (Size ASC,ID_Shoes ASC,ID_Cart ASC),
+	CONSTRAINT R_15 FOREIGN KEY (Size,ID_Shoes) REFERENCES Shoes_size(Size,ID_Shoes)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	CONSTRAINT R_16 FOREIGN KEY (ID_Cart) REFERENCES Cart(ID_Cart)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+)
+go
+
+CREATE TABLE Order_status
+( 
+	OStatusName          varchar(20)  NOT NULL ,
+	CONSTRAINT PKOrder_status PRIMARY KEY  CLUSTERED (OStatusName ASC)
+)
+go
+
+CREATE TABLE Ordering
+( 
+	ID_Order             integer  IDENTITY ( 1,1 )  NOT NULL ,
+	ID_Cart              integer  NULL ,
+	DateOrdering         datetime  NULL ,
+	ToPay                float  NULL ,
+	OStatusName          varchar(20)  NULL ,
+	CONSTRAINT PKOrdering PRIMARY KEY  CLUSTERED (ID_Order ASC),
+	CONSTRAINT R_7 FOREIGN KEY (OStatusName) REFERENCES Order_status(OStatusName)
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE,
+	CONSTRAINT R_9 FOREIGN KEY (ID_Cart) REFERENCES Cart(ID_Cart)
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+)
+go
